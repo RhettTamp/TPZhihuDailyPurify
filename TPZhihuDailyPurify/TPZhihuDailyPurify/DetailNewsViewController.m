@@ -55,10 +55,17 @@
 -(void)addWebView
 {
     _webView = [[UIWebView alloc]initWithFrame:CGRectMake(0, 20, kScreenWidth, kScreenHeith - 70)];
+    
+    UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swiped)];
+    [_webView addGestureRecognizer:recognizer];
     [self.view addSubview:_webView];
 
 }
 
+-(void)swiped
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 
 -(void)addBottomView
 {
