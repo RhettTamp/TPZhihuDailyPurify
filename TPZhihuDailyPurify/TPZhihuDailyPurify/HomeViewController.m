@@ -20,7 +20,7 @@
 @property (nonatomic,strong)UITableView *tableView;
 
 @end
-static NSString * const cellID = @"cellID";
+
 @implementation HomeViewController
 
 - (void)viewDidLoad {
@@ -29,7 +29,6 @@ static NSString * const cellID = @"cellID";
     self.view.backgroundColor = [UIColor whiteColor];
     self.view.frame = CGRectMake(0, 200, kScreenWidth, kScreenHeith - 200);
     PageViewController *pagevc = [[PageViewController alloc]init];
-
     [self addChildViewController:pagevc];
     [self.view addSubview:pagevc.view];
     self.latestNews = [NSMutableArray array];
@@ -40,11 +39,14 @@ static NSString * const cellID = @"cellID";
 
 
 
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 
-    NewsTableViewCell *cell = [[NewsTableViewCell alloc]init];
-
+    NewsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+    if (cell == nil) {
+        cell = [[NewsTableViewCell alloc]init];
+    }
     NewsInfo *news = [[NewsInfo alloc]init];
     news = _latestNews[indexPath.row];
 
@@ -116,8 +118,13 @@ static NSString * const cellID = @"cellID";
     NewsInfo *news = _latestNews[0];
     UIView *backView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, 30)];
     backView.backgroundColor = [UIColor colorWithRed:0 green:154.0/250 blue:205.0/250 alpha:1];
-    UILabel *headLabel = [[UILabel alloc]initWithFrame:CGRectMake((kScreenWidth - 90)/2, 2.5, 90, 25)];
-    headLabel.text = news.date;
+    UILabel *headLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 150, 25)];
+    headLabel.center = CGPointMake(kScreenWidth/2, 15);
+    NSString *year = [news.date substringToIndex:4];
+    NSString *month = [news.date substringWithRange:NSMakeRange(4, 2)];
+    NSString *day = [news.date substringFromIndex:6];
+    NSString *date = [NSString stringWithFormat:@"%@年%@月%@日",year,month,day];
+    headLabel.text = date;
     headLabel.textColor = [UIColor whiteColor];
     headLabel.textAlignment = NSTextAlignmentCenter;
     [backView addSubview:headLabel];
@@ -129,7 +136,7 @@ static NSString * const cellID = @"cellID";
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     DetailNewsViewController *detalVC = [[DetailNewsViewController alloc]init];
     [detalVC getRow:indexPath.row andNewsArray:_latestNews];
-    detalVC.modalTransitionStyle = UIModalTransitionStylePartialCurl;
+    detalVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [self presentViewController:detalVC animated:YES completion:nil];
     
 }

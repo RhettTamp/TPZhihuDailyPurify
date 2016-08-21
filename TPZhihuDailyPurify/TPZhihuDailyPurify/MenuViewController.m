@@ -7,13 +7,17 @@
 //
 
 #import "MenuViewController.h"
+#import "NetHelper.h"
+#import "ThemesInfo.h"
 #import "Header.h"
+#import "UIViewController+MMDrawerController.h"
+#import "ThemeDetailViewController.h"
 @interface MenuViewController ()<UITableViewDataSource,UITableViewDelegate>
 
 @property (nonatomic,strong)UIView *topView;
 @property (nonatomic,strong)UIView *holdView;
 @property (nonatomic,strong)UITableView *tableView;
-@property (nonatomic,copy)NSArray *cells;
+@property (nonatomic,copy)NSMutableArray *themes;
 @property (nonatomic,strong)UIView *separatView;
 @property (nonatomic,strong)UIButton *leftButton;
 @property (nonatomic,strong)UIButton *rightButton;
@@ -27,16 +31,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    self.view.backgroundColor = [UIColor whiteColor];
-    
-    
-    
-    
+    [self showThemes];
+    [self addTopView];
+    [self addBottomView];
+}
+
+
+
+-(void)addTopView
+{
     _topView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 200, 90)];
     _topView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
-    
-    
+  
     _loginButton = [[UIButton alloc]initWithFrame:CGRectMake(30, 20, 50, 30)];
     [_loginButton setTitle:@"请登陆" forState:UIControlStateNormal];
     _loginButton.titleLabel.font = [UIFont systemFontOfSize:14];
@@ -62,15 +68,11 @@
     _separatView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
     [_topView addSubview:_separatView];
     
-    
-    _cells = [NSArray array];
-    _cells = @[@"日常心理学",@"用户推荐日报",@"电影日报",@"不许无聊",@"设计日报",@"大公司日报",@"财经日报",@"互联网安全",@"开始游戏",@"音乐日报",@"动漫日报",@"体育日报"];
-    _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 90, 200, kScreenHeith - 150) style:UITableViewStyleGrouped];
-    _tableView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
-    [_tableView setSeparatorColor:[UIColor clearColor]];
-    _tableView.delegate = self;
-    _tableView.dataSource = self;
-    
+    [self.view addSubview:_topView];
+}
+
+-(void)addBottomView
+{
     _holdView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeith - 150, 200, 150)];
     _holdView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
     
@@ -86,10 +88,42 @@
     [_holdView addSubview:_rightButton];
     
     [self.view addSubview:_holdView];
-    
-    [self.view addSubview:_topView];
+}
+
+-(void)addThemeTable
+{
+    _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 90, 200, kScreenHeith - 150) style:UITableViewStyleGrouped];
+    _tableView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
+    [_tableView setSeparatorColor:[UIColor clearColor]];
+    _tableView.delegate = self;
+    _tableView.dataSource = self;
     [self.view addSubview:_tableView];
 }
+
+-(void)showThemes
+{
+    _themes = [NSMutableArray array];
+    [NetHelper getRequrstWithURL:@"themes" parameters:nil success:^(id responseObject) {
+        
+        NSArray *others = responseObject[@"others"];
+        for (NSDictionary *dic in others) {
+            NSString *themeId = dic[@"id"];
+            NSString *themeName = dic[@"name"];
+            NSString *thumbnail = dic[@"thumbnail"];
+            ThemesInfo *theme = [[ThemesInfo alloc]init];
+            theme.themeId = themeId;
+            theme.themeName = themeName;
+            theme.thumbnail = thumbnail;
+            [_themes addObject:theme];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self addThemeTable];
+        });
+    } failure:^(NSError *error) {
+        NSLog(@"%@",error);
+    }];
+}
+
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -101,14 +135,17 @@
     if (section == 0) {
         return 1;
     }
-    return _cells.count;
+    return _themes.count;
 }
 
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString * const cellID = @"cellID";
+    static NSString *cellID = @"cellID";
+    
+    ThemesInfo *theme = [[ThemesInfo alloc]init];
+    theme = _themes[indexPath.row];
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
     if (cell == nil) {
@@ -119,7 +156,7 @@
     cell.selectedBackgroundView = [[UIView alloc]initWithFrame:cell.frame];
     cell.selectedBackgroundView.backgroundColor = [UIColor colorWithRed:0.0/250 green:104.0/250 blue:139.0/250 alpha:1];
     if (indexPath.section == 1) {
-        cell.textLabel.text = _cells[indexPath.row];
+        cell.textLabel.text = theme.themeName;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }else{
         cell.textLabel.text = @"首页";
@@ -147,5 +184,24 @@
     }
     return nil;
 }
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section == 0) {
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        [self.mm_drawerController toggleDrawerSide:MMDrawerSideLeft animated:YES completion:nil];
+    }else{
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        ThemesInfo *theme = _themes[indexPath.row];
+        ThemeDetailViewController *themeVC = [[ThemeDetailViewController alloc]init];
+        themeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        [themeVC getThemeId:theme.themeId andName:theme.themeName andThumbnail:theme.thumbnail];
+        [self presentViewController:themeVC animated:YES completion:nil];
+    }
+}
+
+
+
+
 
 @end

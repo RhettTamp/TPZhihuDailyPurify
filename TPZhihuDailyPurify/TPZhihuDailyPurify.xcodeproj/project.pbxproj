@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		133F679F1D684B6B00D35C2E /* ThemesInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 133F679E1D684B6B00D35C2E /* ThemesInfo.m */; };
+		133F67A21D6855AA00D35C2E /* ThemeDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 133F67A11D6855AA00D35C2E /* ThemeDetailViewController.m */; };
 		1342E23A1D66C964004A94C6 /* NewsInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1342E2391D66C964004A94C6 /* NewsInfo.m */; };
 		1342E23D1D66ED1B004A94C6 /* NewsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1342E23C1D66ED1B004A94C6 /* NewsTableViewCell.m */; };
 		1342E2401D66FBE2004A94C6 /* DetailNewsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1342E23F1D66FBE2004A94C6 /* DetailNewsViewController.m */; };
@@ -45,6 +47,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		133F679D1D684B6B00D35C2E /* ThemesInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemesInfo.h; sourceTree = "<group>"; };
+		133F679E1D684B6B00D35C2E /* ThemesInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThemesInfo.m; sourceTree = "<group>"; };
+		133F67A01D6855AA00D35C2E /* ThemeDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeDetailViewController.h; sourceTree = "<group>"; };
+		133F67A11D6855AA00D35C2E /* ThemeDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThemeDetailViewController.m; sourceTree = "<group>"; };
 		1342E2381D66C964004A94C6 /* NewsInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsInfo.h; sourceTree = "<group>"; };
 		1342E2391D66C964004A94C6 /* NewsInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsInfo.m; sourceTree = "<group>"; };
 		1342E23B1D66ED1B004A94C6 /* NewsTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsTableViewCell.h; sourceTree = "<group>"; };
@@ -181,6 +187,8 @@
 			children = (
 				1342E2381D66C964004A94C6 /* NewsInfo.h */,
 				1342E2391D66C964004A94C6 /* NewsInfo.m */,
+				133F679D1D684B6B00D35C2E /* ThemesInfo.h */,
+				133F679E1D684B6B00D35C2E /* ThemesInfo.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -209,6 +217,8 @@
 				138F56611D65F8C700AD4320 /* MenuViewController.m */,
 				1342E23E1D66FBE2004A94C6 /* DetailNewsViewController.h */,
 				1342E23F1D66FBE2004A94C6 /* DetailNewsViewController.m */,
+				133F67A01D6855AA00D35C2E /* ThemeDetailViewController.h */,
+				133F67A11D6855AA00D35C2E /* ThemeDetailViewController.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -377,6 +387,7 @@
 			files = (
 				138F565C1D65F82F00AD4320 /* MMDrawerBarButtonItem.m in Sources */,
 				138F56621D65F8C700AD4320 /* MenuViewController.m in Sources */,
+				133F679F1D684B6B00D35C2E /* ThemesInfo.m in Sources */,
 				1345179C1D61BB5B00A482C2 /* AFURLRequestSerialization.m in Sources */,
 				134517B91D61BB6500A482C2 /* UIImageView+AFNetworking.m in Sources */,
 				134517661D618A9300A482C2 /* ViewController.m in Sources */,
@@ -401,6 +412,7 @@
 				1342E23A1D66C964004A94C6 /* NewsInfo.m in Sources */,
 				1345179B1D61BB5B00A482C2 /* AFSecurityPolicy.m in Sources */,
 				138F565E1D65F82F00AD4320 /* MMDrawerVisualState.m in Sources */,
+				133F67A21D6855AA00D35C2E /* ThemeDetailViewController.m in Sources */,
 				134517991D61BB5B00A482C2 /* AFHTTPSessionManager.m in Sources */,
 				134517631D618A9300A482C2 /* AppDelegate.m in Sources */,
 				134517B61D61BB6500A482C2 /* AFNetworkActivityIndicatorManager.m in Sources */,

@@ -38,12 +38,18 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     // Do any additional setup after loading the view.
-    [self addWebView];
-    
-    [self loadNews];
-    [self addHeadImage];
     
 }
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:YES];
+    [self addWebView];
+    [self loadNews];
+    [self addHeadImage];
+
+}
+
 
 -(void)addHeadImage
 {
