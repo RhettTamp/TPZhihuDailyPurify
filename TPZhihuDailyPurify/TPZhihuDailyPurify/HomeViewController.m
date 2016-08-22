@@ -13,7 +13,7 @@
 #import "NetHelper.h"
 #import "NewsTableViewCell.h"
 #import "DetailNewsViewController.h"
-
+#import "PageViewController.h"
 @interface HomeViewController ()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic,strong)NSMutableArray *latestNews;
@@ -25,9 +25,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
     self.view.backgroundColor = [UIColor whiteColor];
-    self.view.frame = CGRectMake(0, 200, kScreenWidth, kScreenHeith - 200);
+    self.view.frame = CGRectMake(0, kPageViewHeight, kScreenWidth, kScreenHeith - kPageViewHeight);
     PageViewController *pagevc = [[PageViewController alloc]init];
     [self addChildViewController:pagevc];
     [self.view addSubview:pagevc.view];
@@ -35,9 +34,6 @@
     [self getNews];
     
 }
-
-
-
 
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -64,43 +60,43 @@
 
 -(void)getNews
 {
-    
-    [NetHelper getRequrstWithURL:@"news/latest" parameters:nil success:^(id responseObject) {
-        
-        
-        NSArray *stories = responseObject[@"stories"];
-        for (NSDictionary *dic in stories) {
-            NewsInfo *news = [[NewsInfo alloc]init];
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        [NetHelper getRequrstWithURL:@"news/latest" parameters:nil success:^(id responseObject) {
+            NSArray *stories = responseObject[@"stories"];
+            for (NSDictionary *dic in stories) {
+                NewsInfo *news = [[NewsInfo alloc]init];
+                
+                news.date = responseObject[@"date"];
+                
+                NSArray *images = dic[@"images"];
+                NSString *imageStr = images[0];
+                
+                NSURL *url = [[NSURL alloc]initWithString:imageStr];
+                NSData *data = [NSData dataWithContentsOfURL:url];
+                UIImage *image = [UIImage imageWithData:data];
+                
+                NSString *newsId = dic[@"id"];
+                NSString *title = dic[@"title"];
+                news.image = image;
+                news.newsId = newsId;
+                news.title = title;
+                [self.latestNews addObject:news];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, kPageViewHeight, kScreenWidth, kScreenHeith - kPageViewHeight) style:UITableViewStylePlain];
+                _tableView.delegate = self;
+                _tableView.dataSource = self;
+                [self.view addSubview:_tableView];
+            });
             
-            news.date = responseObject[@"date"];
-            
-            NSArray *images = dic[@"images"];
-            NSString *imageStr = images[0];
-            
-            NSURL *url = [[NSURL alloc]initWithString:imageStr];
-            NSData *data = [NSData dataWithContentsOfURL:url];
-            UIImage *image = [UIImage imageWithData:data];
-            
-            NSString *newsId = dic[@"id"];
-            NSString *title = dic[@"title"];
-            news.image = image;
-            news.newsId = newsId;
-            news.title = title;
-            [self.latestNews addObject:news];
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
+        } failure:^(NSError *error) {
+            NSLog(@"%@",error);
+        }];
 
-            _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 200, kScreenWidth, kScreenHeith - 200) style:UITableViewStylePlain];
-            _tableView.delegate = self;
-            _tableView.dataSource = self;
-            [self.view addSubview:_tableView];
-        });
-        
-    } failure:^(NSError *error) {
-        NSLog(@"%@",error);
-    }];
+    });
 }
+
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {

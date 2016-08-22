@@ -33,7 +33,11 @@
 @end
 
 @implementation DetailNewsViewController
-
+{
+    int second1,second2;
+    long ms1,ms2;
+    CGFloat timeInterval;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
@@ -61,27 +65,51 @@
 -(void)addWebView
 {
     _webView = [[UIWebView alloc]initWithFrame:CGRectMake(0, 20, kScreenWidth, kScreenHeith - 70)];
-    
-    UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swiped)];
-    [_webView addGestureRecognizer:recognizer];
+    UIPanGestureRecognizer *panRcognizer = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(pan:)];
+   
+    [_webView addGestureRecognizer:panRcognizer];
     [self.view addSubview:_webView];
 
 }
 
--(void)swiped
+-(void)pan:(UIPanGestureRecognizer *)gr
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"YYYY-MM-dd hh:mm:ss:SSSS"];
+    if (gr.state == UIGestureRecognizerStateBegan) {
+        NSString *time = [formatter stringFromDate:[NSDate date]];
+        NSString *secondStr = [time substringWithRange:NSMakeRange(17, 2)];
+        NSString *msStr = [time substringFromIndex:20];
+        second1 = [secondStr intValue];
+        ms1 = [msStr longLongValue];
+    }
+    if (gr.state == UIGestureRecognizerStateEnded) {
+        NSString *time = [formatter stringFromDate:[NSDate date]];
+        NSString *secondStr = [time substringWithRange:NSMakeRange(17, 2)];
+        NSString *msStr = [time substringFromIndex:20];
+        
+        second2 = [secondStr intValue];
+        ms2 = [msStr longLongValue];
+        int second = second2 - second1;
+        long all = second * 10000 + (ms2 - ms1);
+        timeInterval = all / 10000.0;
+        CGFloat distance = [gr translationInView:_webView].x;
+        if (distance > 80 && timeInterval < 0.5) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }
+    }
+    
+    
 }
+
 
 -(void)addBottomView
 {
     
     UIFont *font = [UIFont fontWithName:@"CourierNewPS-BoldMT" size:11];
-    
-    
-    
     NSInteger insert = (kScreenWidth - 20 - 60 * 5)/4;
-    
     _bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, kScreenHeith - 50, kScreenWidth, 50)];
     _backButton = [[UIButton alloc]initWithFrame:CGRectMake(10, 0, 60, 50)];
     [_backButton setImage:[UIImage imageNamed:@"News_Navigation_Arrow"] forState:UIControlStateNormal];
@@ -204,36 +232,37 @@
 -(void)loadNews
 {
     if (_selectedRow < _newsArray.count) {
-        NewsInfo *news = _newsArray[_selectedRow];
-        NSString *newsId = news.newsId;
-        [self getExtraImfomation:newsId];
-        [NetHelper getRequrstWithURL:[NSString stringWithFormat:@"news/%@",newsId] parameters:nil success:^(id responseObject) {
-            
-            NSArray *css = responseObject[@"css"];
-            NSString *webUrl = css[0];
-            NSString *body = responseObject[@"body"];
-            NSString *htmlStr = [NSString stringWithFormat:@"<html><head><link rel=\"stylesheet\" href=%@></head><body>%@</body></html>",webUrl,body];
-            NSString *imageStr = responseObject[@"image"];
-            NSURL *url = [NSURL URLWithString:imageStr];
-            NSData *data = [NSData dataWithContentsOfURL:url];
-            UIImage *image = [UIImage imageWithData:data];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [_webView loadHTMLString:htmlStr baseURL:nil];
-                _HeadImage.image = image;
-                if (_bottomView == nil) {
-                    [self addBottomView];
-                }else{
-                    [self reviseBottomView];
-                }
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            NewsInfo *news = _newsArray[_selectedRow];
+            NSString *newsId = news.newsId;
+            [self getExtraImfomation:newsId];
+            [NetHelper getRequrstWithURL:[NSString stringWithFormat:@"news/%@",newsId] parameters:nil success:^(id responseObject) {
                 
-            });
-            
-        } failure:^(NSError *error) {
-            NSLog(@"%@",error);
-        }];
+                NSArray *css = responseObject[@"css"];
+                NSString *webUrl = css[0];
+                NSString *body = responseObject[@"body"];
+                NSString *htmlStr = [NSString stringWithFormat:@"<html><head><link rel=\"stylesheet\" href=%@></head><body>%@</body></html>",webUrl,body];
+                NSString *imageStr = responseObject[@"image"];
+                NSURL *url = [NSURL URLWithString:imageStr];
+                NSData *data = [NSData dataWithContentsOfURL:url];
+                UIImage *image = [UIImage imageWithData:data];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [_webView loadHTMLString:htmlStr baseURL:nil];
+                    _HeadImage.image = image;
+                    if (_bottomView == nil) {
+                        [self addBottomView];
+                    }else{
+                        [self reviseBottomView];
+                    }
+                    
+                });
+                
+            } failure:^(NSError *error) {
+                NSLog(@"%@",error);
+            }];
+        });
     }
-    
 }
 
 -(void)getExtraImfomation:(NSString *)newsId

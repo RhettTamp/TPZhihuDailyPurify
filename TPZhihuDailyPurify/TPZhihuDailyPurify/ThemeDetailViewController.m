@@ -23,7 +23,11 @@
 @end
 
 @implementation ThemeDetailViewController
-
+{
+    int second1,second2;
+    long ms1,ms2;
+    CGFloat timeInterval;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
@@ -49,39 +53,70 @@
 -(void)showStories
 {
     _stories = [NSMutableArray array];
-    [NetHelper getRequrstWithURL:[NSString stringWithFormat:@"theme/%@",_themeId] parameters:nil success:^(id responseObject) {
-        NSArray *stories = responseObject[@"stories"];
-        for (NSDictionary *dic in stories) {
-            NewsInfo *news = [[NewsInfo alloc]init];
-            NSString *imageStr = dic[@"images"][0];
-            NSURL *url = [NSURL URLWithString:imageStr];
-            NSData *data = [NSData dataWithContentsOfURL:url];
-            UIImage *image = [UIImage imageWithData:data];
-            news.image = image;
-            NSString *title = dic[@"title"];
-            NSString *newsId = dic[@"id"];
-            news.newsId = newsId;
-            news.title = title;
-            [_stories addObject:news];
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self addTableView];
-        });
-    } failure:^(NSError *error) {
-        NSLog(@"%@",error);
-    }];
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        [NetHelper getRequrstWithURL:[NSString stringWithFormat:@"theme/%@",_themeId] parameters:nil success:^(id responseObject) {
+            NSArray *stories = responseObject[@"stories"];
+            for (NSDictionary *dic in stories) {
+                NewsInfo *news = [[NewsInfo alloc]init];
+                NSString *imageStr = dic[@"images"][0];
+                NSURL *url = [NSURL URLWithString:imageStr];
+                NSData *data = [NSData dataWithContentsOfURL:url];
+                UIImage *image = [UIImage imageWithData:data];
+                news.image = image;
+                NSString *title = dic[@"title"];
+                NSString *newsId = dic[@"id"];
+                news.newsId = newsId;
+                news.title = title;
+                [_stories addObject:news];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self addTableView];
+            });
+        } failure:^(NSError *error) {
+            NSLog(@"%@",error);
+        }];
+    });
 }
 
 
 -(void)addGestureRecognizer
 {
-    UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swiped)];
-    [self.view addGestureRecognizer:recognizer];
+    UIPanGestureRecognizer *panRcognizer = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(pan:)];
+    [self.view addGestureRecognizer:panRcognizer];
 }
 
--(void)swiped
+-(void)pan:(UIPanGestureRecognizer *)gr
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"YYYY-MM-dd hh:mm:ss:SSSS"];
+    if (gr.state == UIGestureRecognizerStateBegan) {
+        NSString *time = [formatter stringFromDate:[NSDate date]];
+        NSString *secondStr = [time substringWithRange:NSMakeRange(17, 2)];
+        NSString *msStr = [time substringFromIndex:20];
+        second1 = [secondStr intValue];
+        ms1 = [msStr longLongValue];
+        
+        }
+    if (gr.state == UIGestureRecognizerStateEnded) {
+        NSString *time = [formatter stringFromDate:[NSDate date]];
+        NSString *secondStr = [time substringWithRange:NSMakeRange(17, 2)];
+        NSString *msStr = [time substringFromIndex:20];
+        
+        second2 = [secondStr intValue];
+        ms2 = [msStr longLongValue];
+        int second = second2 - second1;
+        long all = second * 10000 + (ms2 - ms1);
+        timeInterval = all / 10000.0;
+        CGFloat distance = [gr translationInView:self.view].x;
+        
+        if (distance > 80 && timeInterval < 0.5) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }
+    }
+    
+    
 }
 
 -(void)addToolBar
@@ -155,4 +190,8 @@
     [self presentViewController:detailVC animated:YES completion:nil];
 }
 
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    NSLog(@"touch begin");
+}
 @end

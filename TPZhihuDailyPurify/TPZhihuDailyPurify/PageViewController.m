@@ -13,9 +13,6 @@
 #import "NewsInfo.h"
 #import "UIViewController+MMDrawerController.h"
 #import "DetailNewsViewController.h"
-#define kFrame self.view.frame
-#define kWidth self.view.frame.size.width
-#define kHeight 200
 
 @interface PageViewController ()<UIScrollViewDelegate>
 
@@ -41,7 +38,7 @@
 -(void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.frame = CGRectMake(0, 0, kScreenWidth, 250);
+    self.view.frame = CGRectMake(0, 0, kScreenWidth, kPageViewHeight);
     [self showViews];
 }
 
@@ -61,39 +58,40 @@
 
 - (void)showViews
 {
-    
-    NSString *url = @"news/latest";
-    _topNews = [NSMutableArray array];
-    
-    [NetHelper getRequrstWithURL:url parameters:nil success:^(id responseObject) {
-        NSArray *topStorys = responseObject[@"top_stories"];
-    
-        for (NSDictionary *dic in topStorys) {
-            NewsInfo *topNews = [[NewsInfo alloc]init];
-            NSString *imageStr = dic[@"image"];
-            NSString *title = dic[@"title"];
-            NSString *newsId = dic[@"id"];
-            NSURL *url = [NSURL URLWithString:imageStr];
-            NSData *data = [NSData dataWithContentsOfURL:url];
-            UIImage *image = [UIImage imageWithData:data];
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        NSString *url = @"news/latest";
+        _topNews = [NSMutableArray array];
+        [NetHelper getRequrstWithURL:url parameters:nil success:^(id responseObject) {
             
-            topNews.image = image;
-            topNews.newsId = newsId;
-            topNews.title = title;
-            [_topNews addObject:topNews];
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
+            NSArray *topStorys = responseObject[@"top_stories"];
             
-            [self addScrollView];
-            [self addImageViews];
-            [self addPageControl];
-            [self addTitleLabel];
-            [self addMenuButton];
-        });
-        
-    } failure:^(NSError *error) {
-        NSLog(@"%@",error);
-    }];
+            for (NSDictionary *dic in topStorys) {
+                NewsInfo *topNews = [[NewsInfo alloc]init];
+                NSString *imageStr = dic[@"image"];
+                NSString *title = dic[@"title"];
+                NSString *newsId = dic[@"id"];
+                NSData *data = [self getDataFromUrlStr:imageStr];
+                UIImage *image = [UIImage imageWithData:data];
+                
+                topNews.image = image;
+                topNews.newsId = newsId;
+                topNews.title = title;
+                [_topNews addObject:topNews];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [self addScrollView];
+                [self addImageViews];
+                [self addPageControl];
+                [self addTitleLabel];
+                [self addMenuButton];
+            });
+            
+        } failure:^(NSError *error) {
+            NSLog(@"%@",error);
+        }];
+
+    });
 }
 
 -(void)addMenuButton
@@ -114,12 +112,12 @@
 
 -(void)addScrollView
 {
-    _scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, kWidth, 300)];
-    _scrollView.contentSize = CGSizeMake(kWidth * 7, kHeight);
+    _scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, kPageViewHeight)];
+    _scrollView.contentSize = CGSizeMake(kScreenWidth * 7, kPageViewHeight);
     
     _scrollView.pagingEnabled = YES;
     _scrollView.showsHorizontalScrollIndicator = NO;
-    _scrollView.contentOffset = CGPointMake(kWidth, 0);
+    _scrollView.contentOffset = CGPointMake(kScreenWidth, 0);
 
     UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(scrollTaped)];
     [recognizer setNumberOfTapsRequired:1];
@@ -134,13 +132,13 @@
 -(void)addImageViews
 {
 
-    _image1 = [[UIImageView alloc]initWithFrame:CGRectMake(kWidth, 0, kWidth, kHeight)];
-    _image2 = [[UIImageView alloc]initWithFrame:CGRectMake(kWidth * 2, 0, kWidth, kHeight)];
-    _image3 = [[UIImageView alloc]initWithFrame:CGRectMake(kWidth * 3, 0, kWidth, kHeight)];
-    _image4 = [[UIImageView alloc]initWithFrame:CGRectMake(kWidth * 4, 0, kWidth, kHeight)];
-    _image5 = [[UIImageView alloc]initWithFrame:CGRectMake(kWidth * 5, 0, kWidth, kHeight)];
-    _image_1 = [[UIImageView alloc]initWithFrame:CGRectMake(kWidth * 6, 0, kWidth, kHeight)];
-    _image_5 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, kWidth, kHeight)];
+    _image1 = [[UIImageView alloc]initWithFrame:CGRectMake(kScreenWidth, 0, kScreenWidth, kPageViewHeight)];
+    _image2 = [[UIImageView alloc]initWithFrame:CGRectMake(kScreenWidth * 2, 0, kScreenWidth, kPageViewHeight)];
+    _image3 = [[UIImageView alloc]initWithFrame:CGRectMake(kScreenWidth * 3, 0, kScreenWidth, kPageViewHeight)];
+    _image4 = [[UIImageView alloc]initWithFrame:CGRectMake(kScreenWidth * 4, 0, kScreenWidth, kPageViewHeight)];
+    _image5 = [[UIImageView alloc]initWithFrame:CGRectMake(kScreenWidth * 5, 0, kScreenWidth, kPageViewHeight)];
+    _image_1 = [[UIImageView alloc]initWithFrame:CGRectMake(kScreenWidth * 6, 0, kScreenWidth, kPageViewHeight)];
+    _image_5 = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, kPageViewHeight)];
     
     NewsInfo *topNews0 = _topNews[0];
     NewsInfo *topNews1 = _topNews[1];
@@ -182,7 +180,7 @@
     CGSize size = [_pageControl sizeForNumberOfPages:5];
     
     _pageControl.bounds = CGRectMake(0, 0, size.width, size.height);
-    _pageControl.center = CGPointMake(kWidth/2, kHeight-8);
+    _pageControl.center = CGPointMake(kScreenWidth/2, kPageViewHeight-8);
     _pageControl.pageIndicatorTintColor = [UIColor grayColor];
     _pageControl.currentPageIndicatorTintColor = [UIColor blackColor];
     _currentPage = 0;
@@ -192,14 +190,14 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     
-    _currentPage = _scrollView.contentOffset.x/kWidth - 1;
+    _currentPage = _scrollView.contentOffset.x/kScreenWidth - 1;
     if (_currentPage < 0) {
         _currentPage = 4;
-        _scrollView.contentOffset = CGPointMake(kWidth * 5, 0);
+        _scrollView.contentOffset = CGPointMake(kScreenWidth * 5, 0);
     }else if (_currentPage > 4)
     {
         _currentPage = 0;
-        _scrollView.contentOffset = CGPointMake(kWidth, 0);
+        _scrollView.contentOffset = CGPointMake(kScreenWidth, 0);
     }
     _pageControl.currentPage = _currentPage;
     
@@ -211,7 +209,7 @@
 
 -(void)addTitleLabel
 {
-    _titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, kHeight - 65, kWidth - 10, 55)];
+    _titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(5, kPageViewHeight - 60, kScreenWidth - 10, 55)];
     _titleLabel.font = [UIFont systemFontOfSize:18];
     _titleLabel.textColor = [UIColor whiteColor];
     _titleLabel.numberOfLines = 2;
@@ -240,7 +238,7 @@
     CGPoint currentOffset = CGPointZero;
     
     _currentPage += 1;
-    currentOffset.x = (_currentPage + 1) * kWidth;
+    currentOffset.x = (_currentPage + 1) * kScreenWidth;
     _scrollView.contentOffset = currentOffset;
     news = _topNews[_currentPage];
     _titleLabel.text = news.title;
@@ -257,7 +255,12 @@
     [self addTimer];
 }
 
-
+-(NSData *)getDataFromUrlStr:(NSString *)urlStr
+{
+    NSURL *url = [NSURL URLWithString:urlStr];
+    NSData *data = [NSData dataWithContentsOfURL:url];
+    return data;
+}
 
 
 @end

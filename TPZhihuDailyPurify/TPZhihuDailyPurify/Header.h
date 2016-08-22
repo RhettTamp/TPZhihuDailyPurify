@@ -12,6 +12,7 @@
 #define kScreenFram [UIScreen mainScreen].bounds
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
 #define kScreenHeith [UIScreen mainScreen].bounds.size.height
+#define kPageViewHeight 200
 static NSString * const cellID = @"cellID";
 
 #endif /* Header_h */
