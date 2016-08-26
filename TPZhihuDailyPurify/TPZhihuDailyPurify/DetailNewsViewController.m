@@ -34,6 +34,7 @@
 
 @implementation DetailNewsViewController
 {
+    int nowTime;
     int second1,second2;
     long ms1,ms2;
     CGFloat timeInterval;
@@ -42,8 +43,21 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     // Do any additional setup after loading the view.
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeTheme:) name:@"change" object:nil];
+}
+
+-(void)changeTheme:(NSNotification *)sender
+{
+    nowTime = [sender.userInfo[@"nowTime"] intValue];
+    if (nowTime == nighttime) {
+        _webView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
+    }else{
+        _webView.backgroundColor = [UIColor whiteColor];
+    }
     
 }
+
+
 
 -(void)viewWillAppear:(BOOL)animated
 {

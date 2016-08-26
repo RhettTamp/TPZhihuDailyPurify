@@ -14,5 +14,8 @@
 #define kScreenHeith [UIScreen mainScreen].bounds.size.height
 #define kPageViewHeight 200
 static NSString * const cellID = @"cellID";
-
+typedef NS_ENUM(NSInteger, states) {
+    daytime = 0,
+    nighttime = 1,
+};
 #endif /* Header_h */

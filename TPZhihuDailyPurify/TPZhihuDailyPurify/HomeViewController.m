@@ -18,20 +18,43 @@
 
 @property (nonatomic,strong)NSMutableArray *latestNews;
 @property (nonatomic,strong)UITableView *tableView;
+@property (nonatomic,strong)UIView *headView;
 
 @end
 
 @implementation HomeViewController
+int nowTime = daytime;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor whiteColor];
+    self.view.backgroundColor = [UIColor clearColor];
     self.view.frame = CGRectMake(0, kPageViewHeight, kScreenWidth, kScreenHeith - kPageViewHeight);
     PageViewController *pagevc = [[PageViewController alloc]init];
     [self addChildViewController:pagevc];
     [self.view addSubview:pagevc.view];
     self.latestNews = [NSMutableArray array];
     [self getNews];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeTheme:) name:@"change" object:nil];
+}
+
+-(void)changeTheme:(NSNotification *)sender
+{
+    nowTime = [sender.userInfo[@"nowTime"] intValue];
+    if (nowTime == nighttime) {
+        _tableView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
+        NSArray *cells = [self.tableView visibleCells];
+        for (NewsTableViewCell *cell in cells) {
+            cell.title.textColor = [UIColor whiteColor];
+        }
+        _headView.backgroundColor = [UIColor colorWithRed:105.0/250 green:105.0/250 blue:105.0/250 alpha:1];
+    }else{
+        _tableView.backgroundColor = [UIColor whiteColor];
+        NSArray *cells = [self.tableView visibleCells];
+        for (NewsTableViewCell *cell in cells) {
+            cell.title.textColor = [UIColor blackColor];
+        }
+        _headView.backgroundColor = [UIColor colorWithRed:0 green:154.0/250 blue:205.0/250 alpha:1];
+    }
     
 }
 
@@ -45,9 +68,14 @@
     }
     NewsInfo *news = [[NewsInfo alloc]init];
     news = _latestNews[indexPath.row];
-
     cell.title.text = news.title;
     cell.image.image = news.image;
+    if (nowTime == nighttime) {
+        cell.title.textColor = [UIColor whiteColor];
+    }else{
+        cell.title.textColor = [UIColor blackColor];
+    }
+    cell.backgroundColor = [UIColor clearColor];
     return cell;
     
 }
@@ -112,8 +140,9 @@
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     NewsInfo *news = _latestNews[0];
-    UIView *backView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, 30)];
-    backView.backgroundColor = [UIColor colorWithRed:0 green:154.0/250 blue:205.0/250 alpha:1];
+    _headView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, 30)];
+    //backView.backgroundColor = [UIColor clearColor];
+    _headView.backgroundColor = [UIColor colorWithRed:0 green:154.0/250 blue:205.0/250 alpha:1];
     UILabel *headLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 150, 25)];
     headLabel.center = CGPointMake(kScreenWidth/2, 15);
     NSString *year = [news.date substringToIndex:4];
@@ -123,8 +152,8 @@
     headLabel.text = date;
     headLabel.textColor = [UIColor whiteColor];
     headLabel.textAlignment = NSTextAlignmentCenter;
-    [backView addSubview:headLabel];
-    return backView;
+    [_headView addSubview:headLabel];
+    return _headView;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -137,4 +166,8 @@
     
 }
 
+-(void)getRow:(NSInteger)row andNewsArray:(NSArray *)array
+{
+    
+}
 @end

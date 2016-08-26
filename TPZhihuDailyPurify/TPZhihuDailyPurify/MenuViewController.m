@@ -12,6 +12,8 @@
 #import "Header.h"
 #import "UIViewController+MMDrawerController.h"
 #import "ThemeDetailViewController.h"
+
+
 @interface MenuViewController ()<UITableViewDataSource,UITableViewDelegate>
 
 @property (nonatomic,strong)UIView *topView;
@@ -25,9 +27,11 @@
 @property (nonatomic,strong)UIButton *collectButton;
 @property (nonatomic,strong)UIButton *messageButton;
 @property (nonatomic,strong)UIButton *settingButton;
+
 @end
 
 @implementation MenuViewController
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -83,12 +87,37 @@
     _rightButton = [[UIButton alloc]initWithFrame:CGRectMake(200-20-40, 100, 40, 40)];
     [_rightButton setTitle:@"夜间" forState:UIControlStateNormal];
     _rightButton.titleLabel.textColor = [UIColor colorWithRed:207.0/250 green:207.0/250 blue:207.0/250 alpha:1];
+    _rightButton.tag = daytime;
+    [_rightButton addTarget:self action:@selector(changeBackgroundColor:) forControlEvents:UIControlEventTouchUpInside];
     
     [_holdView addSubview:_leftButton];
     [_holdView addSubview:_rightButton];
     
     [self.view addSubview:_holdView];
 }
+
+
+-(void)changeBackgroundColor:(UIButton *)sender
+{
+    if (sender.tag == daytime) {
+        _topView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
+        _tableView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
+        _holdView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
+        [sender setTitle:@"白天" forState:UIControlStateNormal];
+        
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"change" object:nil userInfo:@{@"nowTime":[NSNumber numberWithInt:nighttime]}];
+        sender.tag = nighttime;
+    }else{
+        _topView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
+        _tableView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
+        _holdView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];;
+        [sender setTitle:@"夜间" forState:UIControlStateNormal];
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"change" object:nil userInfo:@{@"nowTime":[NSNumber numberWithInt:daytime]}];
+        sender.tag = daytime;
+    }
+    
+}
+
 
 -(void)addThemeTable
 {
@@ -151,7 +180,8 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellID];
     }
-    cell.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
+    //cell.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
+    cell.backgroundColor = [UIColor clearColor];
     cell.textLabel.textColor = [UIColor colorWithRed:207.0/250 green:207.0/250 blue:207.0/250 alpha:1];
     cell.selectedBackgroundView = [[UIView alloc]initWithFrame:cell.frame];
     cell.selectedBackgroundView.backgroundColor = [UIColor colorWithRed:0.0/250 green:104.0/250 blue:139.0/250 alpha:1];
