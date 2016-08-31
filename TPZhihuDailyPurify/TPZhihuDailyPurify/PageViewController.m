@@ -40,7 +40,23 @@
     [super viewDidLoad];
     self.view.frame = CGRectMake(0, 0, kScreenWidth, kPageViewHeight);
     [self showViews];
+    
+    
+    //[[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeFram:) name:@"changeFram" object:nil];
 }
+
+
+
+//-(void)changeFram:(NSNotification *)sender
+//{
+//    CGSize oldSize = self.view.frame.size;
+//    CGFloat add = [sender.userInfo[@"add"] floatValue];
+//    NSLog(@"%f",add);
+//    self.view.frame = CGRectMake(0, 0, oldSize.width, oldSize.height + add);
+//    self.scrollView.frame = self.view.frame;
+//    self.scrollView.backgroundColor = [UIColor redColor];
+//}
+
 
 -(void)viewWillDisappear:(BOOL)animated
 {
@@ -223,7 +239,7 @@
 {
      _myTimer = [NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(rollingPicture) userInfo:nil repeats:YES];
     
-    [[NSRunLoop mainRunLoop]addTimer:_myTimer forMode:NSRunLoopCommonModes];
+    //[[NSRunLoop mainRunLoop]addTimer:_myTimer forMode:NSRunLoopCommonModes];
 }
 
 -(void)removeTimer
@@ -245,15 +261,15 @@
     
 }
 
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
-{
-    [self removeTimer];
-}
+//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+//{
+//    [self removeTimer];
+//}
 
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-{
-    [self addTimer];
-}
+//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+//{
+//    [self addTimer];
+//}
 
 -(NSData *)getDataFromUrlStr:(NSString *)urlStr
 {

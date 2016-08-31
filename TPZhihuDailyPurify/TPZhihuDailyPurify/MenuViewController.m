@@ -107,6 +107,14 @@
         
         [[NSNotificationCenter defaultCenter]postNotificationName:@"change" object:nil userInfo:@{@"nowTime":[NSNumber numberWithInt:nighttime]}];
         sender.tag = nighttime;
+        
+        
+        
+        
+        nowTime = nighttime;
+        NSUserDefaults *defaults = [[NSUserDefaults alloc]init];
+        [defaults setInteger:nowTime forKey:@"nowTime"];
+        
     }else{
         _topView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
         _tableView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
@@ -114,6 +122,11 @@
         [sender setTitle:@"夜间" forState:UIControlStateNormal];
         [[NSNotificationCenter defaultCenter]postNotificationName:@"change" object:nil userInfo:@{@"nowTime":[NSNumber numberWithInt:daytime]}];
         sender.tag = daytime;
+        
+        
+        nowTime = daytime;
+        NSUserDefaults *defaults = [[NSUserDefaults alloc]init];
+        [defaults setInteger:nowTime forKey:@"nowTime"];
     }
     
 }

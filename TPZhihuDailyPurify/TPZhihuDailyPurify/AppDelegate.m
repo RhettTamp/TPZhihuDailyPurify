@@ -20,6 +20,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    NSUserDefaults *defaults = [[NSUserDefaults alloc]init];
+    [defaults setInteger:daytime forKey:@"nowTime"];
     self.window = [UIWindow new];
     LanchViewController *lanchVC = [[LanchViewController alloc]init];
     self.window.rootViewController = lanchVC;

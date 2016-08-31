@@ -13,9 +13,11 @@
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
 #define kScreenHeith [UIScreen mainScreen].bounds.size.height
 #define kPageViewHeight 200
+//int nowTime;
 static NSString * const cellID = @"cellID";
 typedef NS_ENUM(NSInteger, states) {
     daytime = 0,
     nighttime = 1,
 };
+static int nowTime;
 #endif /* Header_h */

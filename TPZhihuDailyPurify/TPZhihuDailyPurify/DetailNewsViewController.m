@@ -12,7 +12,7 @@
 #import "HomeViewController.h"
 #import "NewsInfo.h"
 
-@interface DetailNewsViewController ()
+@interface DetailNewsViewController ()<UIWebViewDelegate>
 
 @property (nonatomic,strong) UIWebView *webView;
 @property (nonatomic,assign) NSInteger selectedRow;
@@ -34,7 +34,6 @@
 
 @implementation DetailNewsViewController
 {
-    int nowTime;
     int second1,second2;
     long ms1,ms2;
     CGFloat timeInterval;
@@ -42,8 +41,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-    // Do any additional setup after loading the view.
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeTheme:) name:@"change" object:nil];
+    
+    UIPanGestureRecognizer *panRcognizer = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(pan:)];
+    [self.view addGestureRecognizer:panRcognizer];
+    
+    
+    _webView.delegate = self;
+    
 }
 
 -(void)changeTheme:(NSNotification *)sender
@@ -79,9 +84,7 @@
 -(void)addWebView
 {
     _webView = [[UIWebView alloc]initWithFrame:CGRectMake(0, 20, kScreenWidth, kScreenHeith - 70)];
-    UIPanGestureRecognizer *panRcognizer = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(pan:)];
-   
-    [_webView addGestureRecognizer:panRcognizer];
+    
     [self.view addSubview:_webView];
 
 }
@@ -289,5 +292,13 @@
     }];
 }
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    NSLog(@"scroll");
+}
 
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    NSLog(@"dragging");
+}
 @end

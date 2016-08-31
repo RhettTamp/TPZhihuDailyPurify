@@ -19,19 +19,20 @@
 @property (nonatomic,strong)NSMutableArray *latestNews;
 @property (nonatomic,strong)UITableView *tableView;
 @property (nonatomic,strong)UIView *headView;
+@property (nonatomic,strong)PageViewController *pagevc;
 
 @end
 
 @implementation HomeViewController
-int nowTime = daytime;
+//int nowTime = daytime;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor clearColor];
     self.view.frame = CGRectMake(0, kPageViewHeight, kScreenWidth, kScreenHeith - kPageViewHeight);
-    PageViewController *pagevc = [[PageViewController alloc]init];
-    [self addChildViewController:pagevc];
-    [self.view addSubview:pagevc.view];
+    _pagevc = [[PageViewController alloc]init];
+    [self addChildViewController:_pagevc];
+    [self.view addSubview:_pagevc.view];
     self.latestNews = [NSMutableArray array];
     [self getNews];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeTheme:) name:@"change" object:nil];
@@ -166,8 +167,17 @@ int nowTime = daytime;
     
 }
 
--(void)getRow:(NSInteger)row andNewsArray:(NSArray *)array
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    CGRect oldFram = self.view.frame;
+    CGFloat add = scrollView.contentOffset.y;
+//    CGSize newSize = CGSizeMake(oldSize.width, oldSize.height - add);
+//    _pagevc.view.frame = CGRectMake(0, 0, newSize.width, newSize.height);
     
+    [UIView animateWithDuration:0.5 animations:^{
+        self.view.frame = CGRectMake(0, oldFram.origin.y - add, oldFram.size.width, oldFram.size.height + add);
+    }];
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"changeFram" object:nil userInfo:@{@"add" : [NSNumber numberWithFloat:-add]}];
+    NSLog(@"%f",add);
 }
 @end

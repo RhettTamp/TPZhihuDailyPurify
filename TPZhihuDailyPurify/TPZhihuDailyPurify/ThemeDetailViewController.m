@@ -24,7 +24,7 @@
 
 @implementation ThemeDetailViewController
 {
-    int second1,second2;
+    int second1,second2;//,nowTime;
     long ms1,ms2;
     CGFloat timeInterval;
 }
@@ -33,13 +33,19 @@
     self.view.backgroundColor = [UIColor whiteColor];
     [self addGestureRecognizer];
     [self addToolBar];
-    [self showStories];
+    
+    
+    NSUserDefaults *defaults = [[NSUserDefaults alloc]init];
+    nowTime = [[defaults objectForKey:@"nowTime"] intValue];
+    
 }
+
+
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:YES];
-    
+    [self showStories];
 }
 
 -(void)addTableView
@@ -171,6 +177,14 @@
     
     cell.title.text = news.title;
     cell.image.image = news.image;
+    if (nowTime == nighttime) {
+        cell.title.textColor = [UIColor whiteColor];
+        _tableView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
+    }else{
+        cell.title.textColor = [UIColor blackColor];
+        _tableView.backgroundColor = [UIColor whiteColor];
+    }
+    cell.backgroundColor = [UIColor clearColor];
     return cell;
 }
 
@@ -190,8 +204,5 @@
     [self presentViewController:detailVC animated:YES completion:nil];
 }
 
--(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    NSLog(@"touch begin");
-}
+
 @end
