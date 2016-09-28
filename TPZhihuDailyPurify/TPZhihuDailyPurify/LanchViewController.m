@@ -41,27 +41,29 @@
     CGFloat scale = [UIScreen mainScreen].scale;
     NSInteger imageWidth = kScreenWidth * scale;
     NSInteger imageHeight = kScreenHeith * scale;
-    
     [NetHelper getRequrstWithURL:[NSString stringWithFormat:@"start-image/%ld*%ld",(long)imageWidth,(long)imageHeight] parameters:nil success:^(id responseObject) {
         NSString *imageURL = responseObject[@"img"];
         NSString *title = responseObject[@"text"];
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imageURL]]];
-            _imageView.image = image;
-            _titleLabel.text = title;
-            [UIView animateWithDuration:5.0f delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
-                _lanchVIew.alpha = 0.f;
-                _imageView.transform = CGAffineTransformMakeScale(1.08, 1.08);
-            } completion:^(BOOL finished) {
-                HomeViewController *homeVC = [[HomeViewController alloc]init];
-                MenuViewController *menuVC = [[MenuViewController alloc]init];
-                _drawerVC = [[MMDrawerController alloc]initWithCenterViewController:homeVC leftDrawerViewController:menuVC];
-                _drawerVC.openDrawerGestureModeMask = MMOpenDrawerGestureModeAll;
-                _drawerVC.closeDrawerGestureModeMask = MMCloseDrawerGestureModeAll;
-                _drawerVC.maximumLeftDrawerWidth = 200;
-                self.view.window.rootViewController = _drawerVC;
-            }];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                _imageView.image = image;
+                _titleLabel.text = title;
+                [UIView animateWithDuration:5.0f delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+                    _lanchVIew.alpha = 0.f;
+                    _imageView.transform = CGAffineTransformMakeScale(1.08, 1.08);
+                } completion:^(BOOL finished) {
+                    HomeViewController *homeVC = [[HomeViewController alloc]init];
+                    MenuViewController *menuVC = [[MenuViewController alloc]init];
+                    _drawerVC = [[MMDrawerController alloc]initWithCenterViewController:homeVC leftDrawerViewController:menuVC];
+                    _drawerVC.openDrawerGestureModeMask = MMOpenDrawerGestureModeAll;
+                    _drawerVC.closeDrawerGestureModeMask = MMCloseDrawerGestureModeAll;
+                    _drawerVC.maximumLeftDrawerWidth = 200;
+                    self.view.window.rootViewController = _drawerVC;
+                }];
+            });
         });
+        
     } failure:^(NSError *error) {
         NSLog(@"%@",error);
     }];

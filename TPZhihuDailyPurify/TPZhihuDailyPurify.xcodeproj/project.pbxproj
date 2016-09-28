@@ -12,6 +12,7 @@
 		1342E23A1D66C964004A94C6 /* NewsInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1342E2391D66C964004A94C6 /* NewsInfo.m */; };
 		1342E23D1D66ED1B004A94C6 /* NewsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1342E23C1D66ED1B004A94C6 /* NewsTableViewCell.m */; };
 		1342E2401D66FBE2004A94C6 /* DetailNewsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1342E23F1D66FBE2004A94C6 /* DetailNewsViewController.m */; };
+		134390D21D86652100E59B2A /* UserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 134390D11D86652100E59B2A /* UserInfo.m */; };
 		134517601D618A9300A482C2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1345175F1D618A9300A482C2 /* main.m */; };
 		134517631D618A9300A482C2 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 134517621D618A9300A482C2 /* AppDelegate.m */; };
 		134517661D618A9300A482C2 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 134517651D618A9300A482C2 /* ViewController.m */; };
@@ -57,6 +58,8 @@
 		1342E23C1D66ED1B004A94C6 /* NewsTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsTableViewCell.m; sourceTree = "<group>"; };
 		1342E23E1D66FBE2004A94C6 /* DetailNewsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailNewsViewController.h; sourceTree = "<group>"; };
 		1342E23F1D66FBE2004A94C6 /* DetailNewsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailNewsViewController.m; sourceTree = "<group>"; };
+		134390D01D86652100E59B2A /* UserInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInfo.h; sourceTree = "<group>"; };
+		134390D11D86652100E59B2A /* UserInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserInfo.m; sourceTree = "<group>"; };
 		1345175B1D618A9300A482C2 /* TPZhihuDailyPurify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TPZhihuDailyPurify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1345175F1D618A9300A482C2 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		134517611D618A9300A482C2 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -189,6 +192,8 @@
 				1342E2391D66C964004A94C6 /* NewsInfo.m */,
 				133F679D1D684B6B00D35C2E /* ThemesInfo.h */,
 				133F679E1D684B6B00D35C2E /* ThemesInfo.m */,
+				134390D01D86652100E59B2A /* UserInfo.h */,
+				134390D11D86652100E59B2A /* UserInfo.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -404,6 +409,7 @@
 				134517B81D61BB6500A482C2 /* UIButton+AFNetworking.m in Sources */,
 				134517B71D61BB6500A482C2 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
 				1345179E1D61BB5B00A482C2 /* AFURLSessionManager.m in Sources */,
+				134390D21D86652100E59B2A /* UserInfo.m in Sources */,
 				1342E2401D66FBE2004A94C6 /* DetailNewsViewController.m in Sources */,
 				134517BB1D61BB6500A482C2 /* UIRefreshControl+AFNetworking.m in Sources */,
 				134517BC1D61BB6500A482C2 /* UIWebView+AFNetworking.m in Sources */,

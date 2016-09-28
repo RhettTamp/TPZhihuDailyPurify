@@ -13,7 +13,6 @@
 #import "UIViewController+MMDrawerController.h"
 #import "ThemeDetailViewController.h"
 
-
 @interface MenuViewController ()<UITableViewDataSource,UITableViewDelegate>
 
 @property (nonatomic,strong)UIView *topView;
@@ -27,6 +26,7 @@
 @property (nonatomic,strong)UIButton *collectButton;
 @property (nonatomic,strong)UIButton *messageButton;
 @property (nonatomic,strong)UIButton *settingButton;
+//@property (nonatomic,strong)UserInfo *userInfoManager;
 
 @end
 
@@ -34,6 +34,8 @@
 
 
 - (void)viewDidLoad {
+    
+    //self.userInfoManager = [UserInfo defaltInfoManager];
     [super viewDidLoad];
     [self showThemes];
     [self addTopView];
@@ -87,7 +89,7 @@
     _rightButton = [[UIButton alloc]initWithFrame:CGRectMake(200-20-40, 100, 40, 40)];
     [_rightButton setTitle:@"夜间" forState:UIControlStateNormal];
     _rightButton.titleLabel.textColor = [UIColor colorWithRed:207.0/250 green:207.0/250 blue:207.0/250 alpha:1];
-    _rightButton.tag = daytime;
+    _rightButton.tag = dayTime;
     [_rightButton addTarget:self action:@selector(changeBackgroundColor:) forControlEvents:UIControlEventTouchUpInside];
     
     [_holdView addSubview:_leftButton];
@@ -99,36 +101,35 @@
 
 -(void)changeBackgroundColor:(UIButton *)sender
 {
-    if (sender.tag == daytime) {
+    
+    if ([UserInfo defaltInfoManager].timeStates == dayTime) {
         _topView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
         _tableView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
         _holdView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
         [sender setTitle:@"白天" forState:UIControlStateNormal];
         
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"change" object:nil userInfo:@{@"nowTime":[NSNumber numberWithInt:nighttime]}];
-        sender.tag = nighttime;
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"change" object:nil userInfo:@{@"nowTime":[NSNumber numberWithBool:nightTime]}];
+        sender.tag = nightTime;
         
-        
-        
-        
-        nowTime = nighttime;
-        NSUserDefaults *defaults = [[NSUserDefaults alloc]init];
-        [defaults setInteger:nowTime forKey:@"nowTime"];
-        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:[UserInfo defaltInfoManager] forKey:@"userInfoManager"];
     }else{
         _topView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
         _tableView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
-        _holdView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];;
+        _holdView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
         [sender setTitle:@"夜间" forState:UIControlStateNormal];
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"change" object:nil userInfo:@{@"nowTime":[NSNumber numberWithInt:daytime]}];
-        sender.tag = daytime;
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"change" object:nil userInfo:@{@"nowTime":[NSNumber numberWithBool:dayTime]}];
+        sender.tag = dayTime;
         
-        
-        nowTime = daytime;
-        NSUserDefaults *defaults = [[NSUserDefaults alloc]init];
-        [defaults setInteger:nowTime forKey:@"nowTime"];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:[UserInfo defaltInfoManager] forKey:@"userInfoManager"];
     }
-    
+    [[UserInfo defaltInfoManager] changeStates];
+}
+
+-(void)dealloc
+{
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
 }
 
 
@@ -146,21 +147,23 @@
 {
     _themes = [NSMutableArray array];
     [NetHelper getRequrstWithURL:@"themes" parameters:nil success:^(id responseObject) {
-        
-        NSArray *others = responseObject[@"others"];
-        for (NSDictionary *dic in others) {
-            NSString *themeId = dic[@"id"];
-            NSString *themeName = dic[@"name"];
-            NSString *thumbnail = dic[@"thumbnail"];
-            ThemesInfo *theme = [[ThemesInfo alloc]init];
-            theme.themeId = themeId;
-            theme.themeName = themeName;
-            theme.thumbnail = thumbnail;
-            [_themes addObject:theme];
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self addThemeTable];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSArray *others = responseObject[@"others"];
+            for (NSDictionary *dic in others) {
+                NSString *themeId = dic[@"id"];
+                NSString *themeName = dic[@"name"];
+                NSString *thumbnail = dic[@"thumbnail"];
+                ThemesInfo *theme = [[ThemesInfo alloc]init];
+                theme.themeId = themeId;
+                theme.themeName = themeName;
+                theme.thumbnail = thumbnail;
+                [_themes addObject:theme];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self addThemeTable];
+            });
         });
+        
     } failure:^(NSError *error) {
         NSLog(@"%@",error);
     }];
@@ -242,9 +245,6 @@
         [self presentViewController:themeVC animated:YES completion:nil];
     }
 }
-
-
-
 
 
 @end

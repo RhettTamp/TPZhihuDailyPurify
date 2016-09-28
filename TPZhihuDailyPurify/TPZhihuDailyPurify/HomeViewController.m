@@ -20,15 +20,23 @@
 @property (nonatomic,strong)UITableView *tableView;
 @property (nonatomic,strong)UIView *headView;
 @property (nonatomic,strong)PageViewController *pagevc;
+//@property (nonatomic,strong)UserInfo *userInfoManager;
+@property (nonatomic,strong) UIActivityIndicatorView *activity;
 
 @end
 
 @implementation HomeViewController
-//int nowTime = daytime;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor clearColor];
+    
+    _activity = [[UIActivityIndicatorView alloc]initWithFrame:CGRectZero];
+    _activity.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+    _activity.center = CGPointMake(kScreenWidth/2, kScreenHeith/2);
+    [_activity startAnimating];
+    [self.view addSubview:_activity];
+    
+    self.view.backgroundColor = [UIColor whiteColor];
     self.view.frame = CGRectMake(0, kPageViewHeight, kScreenWidth, kScreenHeith - kPageViewHeight);
     _pagevc = [[PageViewController alloc]init];
     [self addChildViewController:_pagevc];
@@ -38,16 +46,22 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeTheme:) name:@"change" object:nil];
 }
 
+-(void)dealloc
+{
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
+}
+
+
 -(void)changeTheme:(NSNotification *)sender
 {
-    nowTime = [sender.userInfo[@"nowTime"] intValue];
-    if (nowTime == nighttime) {
+    if ([UserInfo defaltInfoManager].timeStates == nightTime) {
         _tableView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
         NSArray *cells = [self.tableView visibleCells];
         for (NewsTableViewCell *cell in cells) {
             cell.title.textColor = [UIColor whiteColor];
         }
         _headView.backgroundColor = [UIColor colorWithRed:105.0/250 green:105.0/250 blue:105.0/250 alpha:1];
+        
     }else{
         _tableView.backgroundColor = [UIColor whiteColor];
         NSArray *cells = [self.tableView visibleCells];
@@ -56,7 +70,7 @@
         }
         _headView.backgroundColor = [UIColor colorWithRed:0 green:154.0/250 blue:205.0/250 alpha:1];
     }
-    
+
 }
 
 
@@ -71,7 +85,7 @@
     news = _latestNews[indexPath.row];
     cell.title.text = news.title;
     cell.image.image = news.image;
-    if (nowTime == nighttime) {
+    if ([UserInfo defaltInfoManager].timeStates == nightTime) {
         cell.title.textColor = [UIColor whiteColor];
     }else{
         cell.title.textColor = [UIColor blackColor];
@@ -89,41 +103,45 @@
 
 -(void)getNews
 {
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
         [NetHelper getRequrstWithURL:@"news/latest" parameters:nil success:^(id responseObject) {
-            NSArray *stories = responseObject[@"stories"];
-            for (NSDictionary *dic in stories) {
-                NewsInfo *news = [[NewsInfo alloc]init];
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                NSLog(@"%@",[NSThread currentThread]);
+                NSArray *stories = responseObject[@"stories"];
+                for (NSDictionary *dic in stories) {
+                    NewsInfo *news = [[NewsInfo alloc]init];
+                    
+                    news.date = responseObject[@"date"];
+                    
+                    NSArray *images = dic[@"images"];
+                    NSString *imageStr = images[0];
+                    
+                    NSURL *url = [[NSURL alloc]initWithString:imageStr];
+                    NSData *data = [NSData dataWithContentsOfURL:url];
+                    UIImage *image = [UIImage imageWithData:data];
+                    
+                    NSString *newsId = dic[@"id"];
+                    NSString *title = dic[@"title"];
+                    news.image = image;
+                    news.newsId = newsId;
+                    news.title = title;
+                    NSLog(@"%@",news.title);
+                    [self.latestNews addObject:news];
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, kPageViewHeight, kScreenWidth, kScreenHeith - kPageViewHeight) style:UITableViewStylePlain];
+                    _tableView.delegate = self;
+                    _tableView.dataSource = self;
+                    [self.view addSubview:_tableView];
+                });
                 
-                news.date = responseObject[@"date"];
-                
-                NSArray *images = dic[@"images"];
-                NSString *imageStr = images[0];
-                
-                NSURL *url = [[NSURL alloc]initWithString:imageStr];
-                NSData *data = [NSData dataWithContentsOfURL:url];
-                UIImage *image = [UIImage imageWithData:data];
-                
-                NSString *newsId = dic[@"id"];
-                NSString *title = dic[@"title"];
-                news.image = image;
-                news.newsId = newsId;
-                news.title = title;
-                [self.latestNews addObject:news];
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, kPageViewHeight, kScreenWidth, kScreenHeith - kPageViewHeight) style:UITableViewStylePlain];
-                _tableView.delegate = self;
-                _tableView.dataSource = self;
-                [self.view addSubview:_tableView];
             });
             
         } failure:^(NSError *error) {
             NSLog(@"%@",error);
+            [self.activity stopAnimating];
         }];
-
-    });
+    
 }
 
 
@@ -167,17 +185,5 @@
     
 }
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-    CGRect oldFram = self.view.frame;
-    CGFloat add = scrollView.contentOffset.y;
-//    CGSize newSize = CGSizeMake(oldSize.width, oldSize.height - add);
-//    _pagevc.view.frame = CGRectMake(0, 0, newSize.width, newSize.height);
-    
-    [UIView animateWithDuration:0.5 animations:^{
-        self.view.frame = CGRectMake(0, oldFram.origin.y - add, oldFram.size.width, oldFram.size.height + add);
-    }];
-    [[NSNotificationCenter defaultCenter]postNotificationName:@"changeFram" object:nil userInfo:@{@"add" : [NSNumber numberWithFloat:-add]}];
-    NSLog(@"%f",add);
-}
+
 @end

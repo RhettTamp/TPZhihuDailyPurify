@@ -12,6 +12,9 @@
 #import "Header.h"
 #import "NewsTableViewCell.h"
 #import "DetailNewsViewController.h"
+
+
+
 @interface ThemeDetailViewController ()<UITableViewDataSource,UITableViewDelegate>
 
 @property (nonatomic,strong)NSString *themeId;
@@ -35,8 +38,8 @@
     [self addToolBar];
     
     
-    NSUserDefaults *defaults = [[NSUserDefaults alloc]init];
-    nowTime = [[defaults objectForKey:@"nowTime"] intValue];
+//    NSUserDefaults *defaults = [[NSUserDefaults alloc]init];
+//    nowTime = [[defaults objectForKey:@"nowTime"] intValue];
     
 }
 
@@ -177,7 +180,7 @@
     
     cell.title.text = news.title;
     cell.image.image = news.image;
-    if (nowTime == nighttime) {
+    if ([UserInfo defaltInfoManager].timeStates == nightTime) {
         cell.title.textColor = [UIColor whiteColor];
         _tableView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
     }else{

@@ -12,7 +12,7 @@
 #import "HomeViewController.h"
 #import "NewsInfo.h"
 
-@interface DetailNewsViewController ()<UIWebViewDelegate>
+@interface DetailNewsViewController ()<UIWebViewDelegate,UIScrollViewDelegate>
 
 @property (nonatomic,strong) UIWebView *webView;
 @property (nonatomic,assign) NSInteger selectedRow;
@@ -29,6 +29,8 @@
 @property (nonatomic,strong) UIButton *commentButton;
 @property (nonatomic,strong) UILabel *commentLabel;
 @property (nonatomic,copy) NSArray *topNews;
+@property (nonatomic,strong) UILabel *TopWarnLabel;
+@property (nonatomic,strong) UILabel *bottomWarnLabel;
 
 @end
 
@@ -41,26 +43,29 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeTheme:) name:@"change" object:nil];
+    //[[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeTheme:) name:@"change" object:nil];
     
     UIPanGestureRecognizer *panRcognizer = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(pan:)];
     [self.view addGestureRecognizer:panRcognizer];
-    
-    
     _webView.delegate = self;
     
 }
 
--(void)changeTheme:(NSNotification *)sender
-{
-    nowTime = [sender.userInfo[@"nowTime"] intValue];
-    if (nowTime == nighttime) {
-        _webView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
-    }else{
-        _webView.backgroundColor = [UIColor whiteColor];
-    }
-    
-}
+//-(void)dealloc
+//{
+//    [[NSNotificationCenter defaultCenter]removeObserver:self];
+//}
+
+//-(void)changeTheme:(NSNotification *)sender
+//{
+//    nowTime = [sender.userInfo[@"nowTime"] intValue];
+//    if (nowTime == nighttime) {
+//        _webView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
+//    }else{
+//        _webView.backgroundColor = [UIColor whiteColor];
+//    }
+//    
+//}
 
 
 
@@ -70,23 +75,40 @@
     [self addWebView];
     [self loadNews];
     [self addHeadImage];
-
+    
 }
 
 
 -(void)addHeadImage
 {
-    _HeadImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, 220)];
+    _HeadImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, -80, kScreenWidth, 300)];
+    [_webView.scrollView addSubview:_HeadImage];
     
-    [self.view insertSubview:_HeadImage aboveSubview:_webView];
+    _TopWarnLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 100, 40)];
+    _TopWarnLabel.center = CGPointMake(kScreenWidth/2, 20);
+    _TopWarnLabel.text = @"载入上一篇";
+    _TopWarnLabel.textColor = [UIColor grayColor];
+    _TopWarnLabel.font = [UIFont systemFontOfSize:15];
+    _TopWarnLabel.textAlignment = NSTextAlignmentCenter;
+    _TopWarnLabel.hidden = YES;
+    
+    _bottomWarnLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 100, 40)];
+    _bottomWarnLabel.center = CGPointMake(kScreenWidth/2, kScreenHeith - 50 - 40);
+    _bottomWarnLabel.text = @"载入下一篇";
+    _bottomWarnLabel.textColor = [UIColor grayColor];
+    _bottomWarnLabel.font = [UIFont systemFontOfSize:15];
+    _bottomWarnLabel.textAlignment = NSTextAlignmentCenter;
+    _bottomWarnLabel.hidden = YES;
+    [_webView addSubview:_TopWarnLabel];
+    [_webView addSubview:_bottomWarnLabel];
 }
 
 -(void)addWebView
 {
     _webView = [[UIWebView alloc]initWithFrame:CGRectMake(0, 20, kScreenWidth, kScreenHeith - 70)];
-    
+    _webView.scrollView.delegate = self;
     [self.view addSubview:_webView];
-
+    
 }
 
 -(void)pan:(UIPanGestureRecognizer *)gr
@@ -146,7 +168,7 @@
     [_agreeButton addTarget:self action:@selector(agreeClicked:) forControlEvents:UIControlEventTouchUpInside];
     _agreeLabe = [[UILabel alloc]initWithFrame:CGRectMake(16, 4, 40, 32)];
     _agreeLabe.textColor = [UIColor colorWithRed:139.0/250 green:137.0/250 blue:137.0/250 alpha:1];
-
+    
     
     _agreeLabe.textAlignment = NSTextAlignmentRight;
     _agreeLabe.font = font;
@@ -204,7 +226,7 @@
             self.view.frame = kScreenFram;
             [self loadNews];
         }];
-
+        
     }
     
 }
@@ -249,36 +271,38 @@
 -(void)loadNews
 {
     if (_selectedRow < _newsArray.count) {
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+       // dispatch_async(dispatch_get_global_queue(0, 0), ^{
             NewsInfo *news = _newsArray[_selectedRow];
             NSString *newsId = news.newsId;
             [self getExtraImfomation:newsId];
             [NetHelper getRequrstWithURL:[NSString stringWithFormat:@"news/%@",newsId] parameters:nil success:^(id responseObject) {
-                
-                NSArray *css = responseObject[@"css"];
-                NSString *webUrl = css[0];
-                NSString *body = responseObject[@"body"];
-                NSString *htmlStr = [NSString stringWithFormat:@"<html><head><link rel=\"stylesheet\" href=%@></head><body>%@</body></html>",webUrl,body];
-                NSString *imageStr = responseObject[@"image"];
-                NSURL *url = [NSURL URLWithString:imageStr];
-                NSData *data = [NSData dataWithContentsOfURL:url];
-                UIImage *image = [UIImage imageWithData:data];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [_webView loadHTMLString:htmlStr baseURL:nil];
-                    _HeadImage.image = image;
-                    if (_bottomView == nil) {
-                        [self addBottomView];
-                    }else{
-                        [self reviseBottomView];
-                    }
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    NSArray *css = responseObject[@"css"];
+                    NSString *webUrl = css[0];
+                    NSString *body = responseObject[@"body"];
+                    NSString *htmlStr = [NSString stringWithFormat:@"<html><head><link rel=\"stylesheet\" href=%@></head><body>%@</body></html>",webUrl,body];
+                    NSString *imageStr = responseObject[@"image"];
+                    NSURL *url = [NSURL URLWithString:imageStr];
+                    NSData *data = [NSData dataWithContentsOfURL:url];
+                    UIImage *image = [UIImage imageWithData:data];
                     
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [_webView loadHTMLString:htmlStr baseURL:nil];
+                        _HeadImage.image = image;
+                        if (_bottomView == nil) {
+                            [self addBottomView];
+                        }else{
+                            [self reviseBottomView];
+                        }
+                        
+                    });
                 });
+                
                 
             } failure:^(NSError *error) {
                 NSLog(@"%@",error);
             }];
-        });
+       // });
     }
 }
 
@@ -294,11 +318,68 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    NSLog(@"scroll");
+    CGFloat __block contentOffheight = _webView.scrollView.contentOffset.y;
+    if (contentOffheight <= -60) {
+        _TopWarnLabel.hidden = NO;
+    }else{
+        _TopWarnLabel.hidden = YES;
+    }
+    if (contentOffheight + _webView.frame.size.height >= _webView.scrollView.contentSize.height + 50) {
+        _bottomWarnLabel.hidden = NO;
+    }else{
+        _bottomWarnLabel.hidden = YES;
+    }
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
     NSLog(@"dragging");
+}
+
+-(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    CGFloat contentOffheight = _webView.scrollView.contentOffset.y;
+    if (contentOffheight <= 80) {
+        if (_selectedRow > 0) {
+            _selectedRow -= 1;
+            _TopWarnLabel.text = @"载入上一篇";
+            [UIView animateWithDuration:0.3 animations:^{
+                CGRect rect = CGRectMake(0, kScreenHeith, kScreenWidth, kScreenHeith);
+                self.view.frame = rect;
+                self.view.window.backgroundColor = [UIColor whiteColor];
+            } completion:^(BOOL finished) {
+                self.view.frame = kScreenFram;
+                [self loadNews];
+            }];
+        }else{
+            _TopWarnLabel.text = @"已经是第一篇";
+        }
+    }
+    if (contentOffheight + _webView.frame.size.height >= _webView.scrollView.contentSize.height + 80) {
+        if (_selectedRow < _newsArray.count) {
+            _selectedRow += 1;
+            [UIView animateWithDuration:0.3 animations:^{
+                CGRect rect = CGRectMake(0, -kScreenHeith, kScreenWidth, kScreenHeith);
+                self.view.frame = rect;
+                self.view.window.backgroundColor = [UIColor whiteColor];
+            } completion:^(BOOL finished) {
+                self.view.frame = kScreenFram;
+                [self loadNews];
+            }];
+            
+        }
+
+    }
+    NSLog(@"endDragging");
+}
+
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
+{
+    NSLog(@"begindecelerate");
+}
+
+-(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    NSLog(@"endDecelerate");
 }
 @end

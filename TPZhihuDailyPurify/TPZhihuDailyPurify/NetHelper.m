@@ -11,13 +11,14 @@
 
 static NSString * const kBaseUrl = @"http://news-at.zhihu.com/api/4/";
 
-@implementation NetHelper
+ @implementation NetHelper
 
 +(void)getRequrstWithURL:(NSString *)URLString parameters:(id)parameters success:(success)success failure:(failure)failure
 {
     AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc]initWithBaseURL:[NSURL URLWithString:kBaseUrl]];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    manager.requestSerializer.timeoutInterval = 20;
     [manager GET:URLString parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (success) {
             success(responseObject);

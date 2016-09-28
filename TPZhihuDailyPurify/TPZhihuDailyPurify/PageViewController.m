@@ -29,7 +29,7 @@
 @property (nonatomic,strong)UILabel *titleLabel;
 @property (nonatomic,copy)NSMutableArray *topNews;
 @property (nonatomic,strong)NSTimer *myTimer;
-@property (nonatomic,strong) UIButton *clickButton;
+//@property (nonatomic,strong) UIButton *clickButton;
 
 @end
 
@@ -74,40 +74,40 @@
 
 - (void)showViews
 {
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+    //dispatch_async(dispatch_get_global_queue(0, 0), ^{
         NSString *url = @"news/latest";
         _topNews = [NSMutableArray array];
         [NetHelper getRequrstWithURL:url parameters:nil success:^(id responseObject) {
             
             NSArray *topStorys = responseObject[@"top_stories"];
-            
-            for (NSDictionary *dic in topStorys) {
-                NewsInfo *topNews = [[NewsInfo alloc]init];
-                NSString *imageStr = dic[@"image"];
-                NSString *title = dic[@"title"];
-                NSString *newsId = dic[@"id"];
-                NSData *data = [self getDataFromUrlStr:imageStr];
-                UIImage *image = [UIImage imageWithData:data];
-                
-                topNews.image = image;
-                topNews.newsId = newsId;
-                topNews.title = title;
-                [_topNews addObject:topNews];
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [self addScrollView];
-                [self addImageViews];
-                [self addPageControl];
-                [self addTitleLabel];
-                [self addMenuButton];
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                for (NSDictionary *dic in topStorys) {
+                    NewsInfo *topNews = [[NewsInfo alloc]init];
+                    NSString *imageStr = dic[@"image"];
+                    NSString *title = dic[@"title"];
+                    NSString *newsId = dic[@"id"];
+                    NSData *data = [self getDataFromUrlStr:imageStr];
+                    UIImage *image = [UIImage imageWithData:data];
+                    
+                    topNews.image = image;
+                    topNews.newsId = newsId;
+                    topNews.title = title;
+                    [_topNews addObject:topNews];
+                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [self addScrollView];
+                    [self addImageViews];
+                    [self addPageControl];
+                    [self addTitleLabel];
+                    [self addMenuButton];
+                });
             });
-            
         } failure:^(NSError *error) {
             NSLog(@"%@",error);
         }];
 
-    });
+    //});
 }
 
 -(void)addMenuButton
@@ -239,7 +239,6 @@
 {
      _myTimer = [NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(rollingPicture) userInfo:nil repeats:YES];
     
-    //[[NSRunLoop mainRunLoop]addTimer:_myTimer forMode:NSRunLoopCommonModes];
 }
 
 -(void)removeTimer

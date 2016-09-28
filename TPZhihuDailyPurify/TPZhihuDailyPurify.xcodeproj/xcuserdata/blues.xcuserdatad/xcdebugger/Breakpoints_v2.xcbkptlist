@@ -20,11 +20,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TPZhihuDailyPurify/AppDelegate.m"
-            timestampString = "494225597.884996"
+            timestampString = "495363513.108357"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "82"
-            endingLineNumber = "82">
+            startingLineNumber = "90"
+            endingLineNumber = "90">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -39,8 +39,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "13"
             endingLineNumber = "13"
-            landmarkName = "@interface NetHelper"
-            landmarkType = "2">
+            landmarkName = "typedef void (^success)(id responseObject);"
+            landmarkType = "16">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -50,11 +50,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TPZhihuDailyPurify/AppDelegate.m"
-            timestampString = "494225597.884996"
+            timestampString = "495363513.108357"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "34"
-            endingLineNumber = "34"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
             landmarkName = "-applicationWillResignActive:"
             landmarkType = "5">
          </BreakpointContent>
@@ -130,13 +130,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TPZhihuDailyPurify/HomeViewController.m"
-            timestampString = "494228994.577961"
+            timestampString = "496766478.512104"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "87"
-            endingLineNumber = "87"
+            startingLineNumber = "101"
+            endingLineNumber = "101"
             landmarkName = "-tableView:numberOfRowsInSection:"
-            landmarkType = "5">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -146,29 +146,93 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TPZhihuDailyPurify/NetHelper.m"
-            timestampString = "493807285.557204"
+            timestampString = "496761672.077287"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "22"
-            endingLineNumber = "22"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
             landmarkName = "+getRequrstWithURL:parameters:success:failure:"
-            landmarkType = "5">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "TPZhihuDailyPurify/DetailNewsViewController.m"
-            timestampString = "494227585.741951"
+            filePath = "TPZhihuDailyPurify/UserInfo.h"
+            timestampString = "495363441.198569"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "297"
-            endingLineNumber = "297"
-            landmarkName = "-scrollViewDidScroll:"
-            landmarkType = "5">
+            startingLineNumber = "16"
+            endingLineNumber = "16"
+            landmarkName = "timeStates"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TPZhihuDailyPurify/HomeViewController.m"
+            timestampString = "496766478.512104"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
+            landmarkName = "-getNews"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TPZhihuDailyPurify/UserInfo.m"
+            timestampString = "496766792.231736"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "19"
+            endingLineNumber = "19"
+            landmarkName = "+defaltInfoManager"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "+[UserInfo defaltInfoManager]"
+                  moduleName = "TPZhihuDailyPurify"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/lanshangongzuoishi/zhihu/TPZhihuDailyPurify/TPZhihuDailyPurify/UserInfo.m"
+                  timestampString = "496767035.922252"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "34">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__29+[UserInfo defaltInfoManager]_block_invoke"
+                  moduleName = "TPZhihuDailyPurify"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/lanshangongzuoishi/zhihu/TPZhihuDailyPurify/TPZhihuDailyPurify/UserInfo.m"
+                  timestampString = "496767035.924602"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "21"
+                  endingLineNumber = "21"
+                  offsetFromSymbolStart = "16">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

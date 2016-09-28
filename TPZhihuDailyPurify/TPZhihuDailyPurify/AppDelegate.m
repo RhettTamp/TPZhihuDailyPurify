@@ -9,7 +9,7 @@
 #import "AppDelegate.h"
 #import "Header.h"
 #import "LanchViewController.h"
-
+#import "UserInfo.h"
 
 @interface AppDelegate ()
 
@@ -20,8 +20,16 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    NSUserDefaults *defaults = [[NSUserDefaults alloc]init];
-    [defaults setInteger:daytime forKey:@"nowTime"];
+    //[[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"nowTime"];
+    
+    
+    
+//    UserInfo *manager = [[NSUserDefaults standardUserDefaults] objectForKey:@"userInfoManager"];
+//    if (manager) {
+//        [UserInfo defaltInfoManager].timeStates = manager.timeStates;
+//        [[UserInfo defaltInfoManager].stored addObjectsFromArray:manager.stored];
+//    }
+    
     self.window = [UIWindow new];
     LanchViewController *lanchVC = [[LanchViewController alloc]init];
     self.window.rootViewController = lanchVC;

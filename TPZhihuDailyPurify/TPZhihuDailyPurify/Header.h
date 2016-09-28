@@ -8,16 +8,18 @@
 
 #ifndef Header_h
 #define Header_h
-
+#import "UserInfo.h"
 #define kScreenFram [UIScreen mainScreen].bounds
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
 #define kScreenHeith [UIScreen mainScreen].bounds.size.height
 #define kPageViewHeight 200
-//int nowTime;
+#define kNowTime [[NSUserDefaults standardUserDefaults]integerForKey:@"nowTime"]
+#define dayTime YES
+#define nightTime NO
 static NSString * const cellID = @"cellID";
-typedef NS_ENUM(NSInteger, states) {
-    daytime = 0,
-    nighttime = 1,
-};
-static int nowTime;
+//typedef NS_ENUM(NSInteger, states) {
+//    daytime = 0,
+//    nighttime = 1,
+//};
+//static NSInteger nowTime;
 #endif /* Header_h */
