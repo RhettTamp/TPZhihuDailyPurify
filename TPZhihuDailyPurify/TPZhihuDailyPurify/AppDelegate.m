@@ -29,7 +29,14 @@
 //        [UserInfo defaltInfoManager].timeStates = manager.timeStates;
 //        [[UserInfo defaltInfoManager].stored addObjectsFromArray:manager.stored];
 //    }
-    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults objectForKey:@"timeStates"]) {
+
+        [UserInfo defaltInfoManager].timeStates = [defaults objectForKey:@"timeState"];
+    }
+    if ([defaults objectForKey:@"stored"]) {
+        [[UserInfo defaltInfoManager].stored addObjectsFromArray:[defaults objectForKey:@"stored"]];
+    }
     self.window = [UIWindow new];
     LanchViewController *lanchVC = [[LanchViewController alloc]init];
     self.window.rootViewController = lanchVC;

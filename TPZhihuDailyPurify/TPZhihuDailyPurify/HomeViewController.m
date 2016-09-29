@@ -132,6 +132,13 @@
                     _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, kPageViewHeight, kScreenWidth, kScreenHeith - kPageViewHeight) style:UITableViewStylePlain];
                     _tableView.delegate = self;
                     _tableView.dataSource = self;
+                    
+                    if ([UserInfo defaltInfoManager].timeStates == nightTime) {
+                        _tableView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
+                        
+                    }else{
+                        _tableView.backgroundColor = [UIColor whiteColor];
+                    }
                     [self.view addSubview:_tableView];
                 });
                 
@@ -172,6 +179,12 @@
     headLabel.textColor = [UIColor whiteColor];
     headLabel.textAlignment = NSTextAlignmentCenter;
     [_headView addSubview:headLabel];
+    if ([UserInfo defaltInfoManager].timeStates == nightTime) {
+        _headView.backgroundColor = [UIColor colorWithRed:105.0/250 green:105.0/250 blue:105.0/250 alpha:1];
+        
+    }else{
+        _headView.backgroundColor = [UIColor colorWithRed:0 green:154.0/250 blue:205.0/250 alpha:1];
+    }
     return _headView;
 }
 

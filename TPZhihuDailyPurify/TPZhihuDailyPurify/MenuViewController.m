@@ -73,7 +73,11 @@
     _separatView = [[UIView alloc]initWithFrame:CGRectMake(0, 89, 200, 0.5)];
     _separatView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
     [_topView addSubview:_separatView];
-    
+    if ([UserInfo defaltInfoManager].timeStates == dayTime) {
+        _topView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
+    }else{
+        _topView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
+    }
     [self.view addSubview:_topView];
 }
 
@@ -87,14 +91,20 @@
     _leftButton.titleLabel.textColor = [UIColor colorWithRed:207.0/250 green:207.0/250 blue:207.0/250 alpha:1];
     
     _rightButton = [[UIButton alloc]initWithFrame:CGRectMake(200-20-40, 100, 40, 40)];
-    [_rightButton setTitle:@"夜间" forState:UIControlStateNormal];
+    
     _rightButton.titleLabel.textColor = [UIColor colorWithRed:207.0/250 green:207.0/250 blue:207.0/250 alpha:1];
     _rightButton.tag = dayTime;
     [_rightButton addTarget:self action:@selector(changeBackgroundColor:) forControlEvents:UIControlEventTouchUpInside];
     
     [_holdView addSubview:_leftButton];
     [_holdView addSubview:_rightButton];
-    
+    if ([UserInfo defaltInfoManager].timeStates == dayTime) {
+        _holdView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
+        [_rightButton setTitle:@"夜间" forState:UIControlStateNormal];
+    }else{
+        _holdView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
+        [_rightButton setTitle:@"白天" forState:UIControlStateNormal];
+    }
     [self.view addSubview:_holdView];
 }
 
@@ -108,23 +118,18 @@
         _holdView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
         [sender setTitle:@"白天" forState:UIControlStateNormal];
         
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"change" object:nil userInfo:@{@"nowTime":[NSNumber numberWithBool:nightTime]}];
-        sender.tag = nightTime;
-        
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setObject:[UserInfo defaltInfoManager] forKey:@"userInfoManager"];
     }else{
         _topView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
         _tableView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
         _holdView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
         [sender setTitle:@"夜间" forState:UIControlStateNormal];
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"change" object:nil userInfo:@{@"nowTime":[NSNumber numberWithBool:dayTime]}];
-        sender.tag = dayTime;
-        
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setObject:[UserInfo defaltInfoManager] forKey:@"userInfoManager"];
     }
     [[UserInfo defaltInfoManager] changeStates];
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"change" object:nil userInfo:@{@"nowTime":[NSNumber numberWithBool:[UserInfo defaltInfoManager].timeStates]}];
+    NSLog(@"%d",[UserInfo defaltInfoManager].timeStates);
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:[UserInfo defaltInfoManager].timeStates forKey:@"timeStates"];
+    [defaults setObject:[UserInfo defaltInfoManager].stored forKey:@"stored"];
 }
 
 -(void)dealloc
@@ -136,10 +141,14 @@
 -(void)addThemeTable
 {
     _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 90, 200, kScreenHeith - 150) style:UITableViewStyleGrouped];
-    _tableView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
     [_tableView setSeparatorColor:[UIColor clearColor]];
     _tableView.delegate = self;
     _tableView.dataSource = self;
+    if ([UserInfo defaltInfoManager].timeStates == dayTime) {
+        _tableView.backgroundColor = [UIColor colorWithRed:74.0/250 green:112.0/250 blue:119.0/250 alpha:1];
+    }else{
+        _tableView.backgroundColor = [UIColor colorWithRed:54.0/250 green:54.0/250 blue:54.0/250 alpha:1];
+    }
     [self.view addSubview:_tableView];
 }
 

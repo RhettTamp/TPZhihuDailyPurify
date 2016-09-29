@@ -217,6 +217,7 @@
 {
     
     if (_selectedRow < _newsArray.count - 1) {
+        _TopWarnLabel.text = @"载入上一篇";
         _selectedRow += 1;
         [UIView animateWithDuration:0.3 animations:^{
             CGRect rect = CGRectMake(0, -kScreenHeith, kScreenWidth, kScreenHeith);
@@ -331,10 +332,6 @@
     }
 }
 
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
-{
-    NSLog(@"dragging");
-}
 
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
@@ -357,6 +354,7 @@
     }
     if (contentOffheight + _webView.frame.size.height >= _webView.scrollView.contentSize.height + 80) {
         if (_selectedRow < _newsArray.count) {
+            _TopWarnLabel.text = @"载入上一篇";
             _selectedRow += 1;
             [UIView animateWithDuration:0.3 animations:^{
                 CGRect rect = CGRectMake(0, -kScreenHeith, kScreenWidth, kScreenHeith);
@@ -370,16 +368,7 @@
         }
 
     }
-    NSLog(@"endDragging");
 }
 
-- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
-{
-    NSLog(@"begindecelerate");
-}
 
--(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-    NSLog(@"endDecelerate");
-}
 @end

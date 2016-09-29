@@ -19,7 +19,7 @@ static UserInfo *defaltInfoManager = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         defaltInfoManager = [[UserInfo alloc]init];
-        defaltInfoManager.stored = [NSMutableArray alloc];
+        defaltInfoManager.stored = [[NSMutableArray alloc]init];
         defaltInfoManager.timeStates = dayTime;
     });
     return defaltInfoManager;
@@ -52,7 +52,7 @@ static UserInfo *defaltInfoManager = nil;
 
 -(void)changeStates
 {
-    self.timeStates = -self.timeStates;
+    self.timeStates = !_timeStates;
 }
 
 

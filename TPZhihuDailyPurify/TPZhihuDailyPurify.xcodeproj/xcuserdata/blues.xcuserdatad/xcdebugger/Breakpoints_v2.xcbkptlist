@@ -20,11 +20,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TPZhihuDailyPurify/AppDelegate.m"
-            timestampString = "495363513.108357"
+            timestampString = "496805589.559706"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "90"
-            endingLineNumber = "90">
+            startingLineNumber = "97"
+            endingLineNumber = "97">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -50,13 +50,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TPZhihuDailyPurify/AppDelegate.m"
-            timestampString = "495363513.108357"
+            timestampString = "496805589.559706"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
             landmarkName = "-applicationWillResignActive:"
-            landmarkType = "5">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
